@@ -9,5 +9,6 @@ namespace Code.Core{
         public int MinCountCards = 4;
         public int MaxCountCards = 6;
         public string UrlAdressByImage = "https://picsum.photos/200/300";
+        public float AnimationSpeed = 0.5f;
     }
 }
