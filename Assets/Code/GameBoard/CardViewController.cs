@@ -1,4 +1,5 @@
-﻿using Code.Core;
+﻿using System.Threading.Tasks;
+using Code.Core;
 using Code.Core.Net;
 using DG.Tweening;
 using UniRx;
@@ -23,7 +24,14 @@ namespace Code.GameBoard{
 
             _model = _cardController.GetModel();
             _model.HealthPoints.Subscribe(ChangeHp).AddTo(_subscriptions);
+            _cardController.OnDeath += OnDied;
             _view.Init(_model.FaceImage,_model.Title,_model.AttackValue);
+        }
+
+        private async void OnDied(CardController obj){
+            _view.DiedAnimation(_settings.AnimationSpeed);
+            await Task.Delay((int)(1000*_settings.AnimationSpeed));
+            _view.DestroyHimself();
         }
 
         public void MoveTo(in Vector3 endPosition){
@@ -43,12 +51,19 @@ namespace Code.GameBoard{
 
             if (_oldHpValue != 0){
                 var delta = _oldHpValue - value;
+                // Debug.Log($"old value:{_oldHpValue}|delta:{delta}");
                 _view.StartNotificationFromChangeHp(delta, _settings.AnimationSpeed);
             }
+
+            _oldHpValue = value;
         }
 
         ~CardViewController(){
             _subscriptions?.Dispose();
+        }
+
+        public bool IsReferenceEquals(CardController item){
+            return object.ReferenceEquals(item, _cardController);
         }
     }
 }

@@ -29,16 +29,36 @@ namespace Code.GameBoard{
         }
 
         public void StartNotificationFromChangeHp(in int delta, float settingsAnimationSpeed){
-            StartCoroutine(StartNotification(delta,settingsAnimationSpeed));
+            StartCoroutine(StartNotification(delta, settingsAnimationSpeed));
         }
-        
+
         private IEnumerator StartNotification(int delta, float duration){
-            var notification = Instantiate(_changedTextInHp, this.transform, true);
-            notification.text = delta.ToString();
+            var notification = Instantiate(_changedTextInHp);
+            notification.transform.position = _hp.transform.position;
+
+            notification.text = delta > 0 ? $"-{delta}" : $"{delta}";
+            notification.color = GetColorByValue(delta);
+
             notification.transform.DOMove(_changedTextInHp.transform.position + Vector3.up, duration);
             notification.DOFade(0, duration);
-            yield return Task.Delay((int)duration *1000);
+            yield return new WaitForSeconds(delta);
             Destroy(notification);
+        }
+
+        private Color GetColorByValue(in int delta){
+            if (delta > 0)
+                return Color.red;
+            if (delta < 0)
+                return Color.green;
+            return Color.white;
+        }
+
+        public void DestroyHimself(){
+            Destroy(this);
+        }
+
+        public void DiedAnimation(float duration){
+            transform.DOScale(0, duration);
         }
     }
 }

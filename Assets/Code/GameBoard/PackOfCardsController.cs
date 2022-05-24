@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Code.Core;
 using Code.Core.Net;
 using DG.Tweening;
+using UniRx;
 using UnityEngine;
 
 
@@ -16,13 +17,14 @@ namespace Code.GameBoard{
         [SerializeField]
         private PackOfCardsView _view;
 
-        private List<CardViewController> _packOfCards;
+        protected CompositeDisposable _subscriptions = new CompositeDisposable();
+
+        private List<CardViewController> _packOfCards = new List<CardViewController>();
 
         private async void Awake(){
             DOTween.Init();
-            await Factory.CreateControllersOfCards(_model, _settings);
-
             _model.OnChangeList += OnChangeList;
+            await Factory.CreateControllersOfCards(_model, _settings);
         }
 
         private async void OnChangeList(){
@@ -30,9 +32,24 @@ namespace Code.GameBoard{
             var list = _view.transform.GetComponentsInChildren<CardView>().ToList();
             if (list.Count == 0){
                 foreach (var card in _model.CardsList){
+                    card.OnDeath += OneCardDied;
                     var cardView = Instantiate(_settings.CardTemplate, _view.transform, false);
                     var cardViewController = new CardViewController(_settings, card, cardView);
                     _packOfCards.Add(cardViewController);
+                }
+            }
+
+            await SetDefaultPositionOnCards();
+        }
+
+        private async void OneCardDied(IGetDamaged item){
+            item.OnDeath -= OneCardDied;
+            _model.CardsList.Remove(item as CardController);
+
+            foreach (var controller in _packOfCards){
+                if (controller.IsReferenceEquals(item as CardController)){
+                    _packOfCards.Remove(controller);
+                    break;
                 }
             }
 
@@ -62,6 +79,7 @@ namespace Code.GameBoard{
 
         ~PackOfCardsController(){
             _model.OnChangeList -= OnChangeList;
+            _subscriptions?.Dispose();
         }
     }
 }
