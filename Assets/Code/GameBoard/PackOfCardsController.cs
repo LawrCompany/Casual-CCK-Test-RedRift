@@ -38,6 +38,7 @@ namespace Code.GameBoard{
         }
 
         private async Task SetDefaultPositionOnCards(){
+            var rotationCoefficient = 2; //I know that it`s bad practice, but I couldn't turn the cards in the right direction
             //set normal positions
             var leftBoarder = _view._leftBoarder.position;
             var rightBoarder = _view._rightBoarder.position;
@@ -53,9 +54,10 @@ namespace Code.GameBoard{
             }
 
             await Task.Delay((int) (_settings.AnimationSpeed * 1000));
+            //rotate to anchor
             foreach (var card in _packOfCards){
                 card.transform.DORotate(new Vector3(0, 0,
-                    (-card.transform.position.x + _view._anchorCenter.position.x) * 2), 0.5f);
+                    (-card.transform.position.x + _view._anchorCenter.position.x) * rotationCoefficient), _settings.AnimationSpeed);
             }
         }
 
