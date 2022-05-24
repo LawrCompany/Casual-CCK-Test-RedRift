@@ -1,12 +1,16 @@
-﻿using UniRx;
-using UnityEngine;
+﻿using Code.Core.Net;
 
 
 namespace Code.Core{
     public class CardController{
-        public ReactiveProperty<int> HealthPoints{ get; set; }
-        public string Title{ get; set; }
-        public Sprite FaceImage{ get; set; }
-        public int AttackValue{ get; set; }
+        private readonly CardModel _model;
+
+        public CardController(CardModel model){
+            _model = model;
+        }
+
+        public ICardModel GetModel(){
+            return _model;
+        }
     }
 }

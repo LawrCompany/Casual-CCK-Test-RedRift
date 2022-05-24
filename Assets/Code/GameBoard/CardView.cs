@@ -1,47 +1,44 @@
-﻿using System;
+﻿using System.Collections;
+using System.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
-using UniRx;
 using UnityEngine;
 
 
 namespace Code.GameBoard{
-    public class CardView : BaseView{
+    public class CardView : MonoBehaviour{
         [SerializeField]
-        private SpriteRenderer _faceImage;
+        public SpriteRenderer _faceImage;
         [SerializeField]
-        private TextMeshPro _title;
+        public TextMeshPro _title;
         [SerializeField]
         private TextMeshPro _hp;
         [SerializeField]
-        private TextMeshPro _changedTextInHp;
-        
-        public void Init(Sprite faceImage, string title,ReactiveProperty<int> healthPoints, int attackValue){
+        public TextMeshPro _changedTextInHp;
+        [SerializeField]
+        public TextMeshPro _attackValue;
+
+        public void Init(Sprite faceImage, string title, in int attackValue){
             _faceImage.sprite = faceImage;
-            healthPoints.Subscribe(ChangeHp).AddTo(_subscriptions);
             _title.text = title;
+            _attackValue.text = attackValue.ToString();
         }
 
-        private void ChangeHp(int value){
-            SetDefaultNotification();
-            var oldValue = int.Parse(_hp.text);
-            var delta = oldValue - value;
-            
+        public void ChangeHp(in int value){
             _hp.text = value.ToString();
-            
-            if(oldValue != 0)
-                StartNotificationFromChangeHp(delta);
         }
 
-        private void StartNotificationFromChangeHp(int delta){
-            _changedTextInHp.text = delta.ToString();
-            _changedTextInHp.transform.DOMove(_changedTextInHp.transform.position + Vector3.up, 0.5f);
-            _changedTextInHp.DOFade(0, 0.5f);
+        public void StartNotificationFromChangeHp(in int delta, float settingsAnimationSpeed){
+            StartCoroutine(StartNotification(delta,settingsAnimationSpeed));
         }
-
-        private void SetDefaultNotification(){
-            _changedTextInHp.transform.position = _hp.transform.position;
-            _changedTextInHp.text = "";
+        
+        private IEnumerator StartNotification(int delta, float duration){
+            var notification = Instantiate(_changedTextInHp, this.transform, true);
+            notification.text = delta.ToString();
+            notification.transform.DOMove(_changedTextInHp.transform.position + Vector3.up, duration);
+            notification.DOFade(0, duration);
+            yield return Task.Delay((int)duration *1000);
+            Destroy(notification);
         }
     }
 }

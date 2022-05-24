@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Code.Core;
+using Code.Core.Net;
 using DG.Tweening;
 using UnityEngine;
 
@@ -15,26 +16,23 @@ namespace Code.GameBoard{
         [SerializeField]
         private PackOfCardsView _view;
 
-        private List<CardView> _packOfCards;
+        private List<CardViewController> _packOfCards;
 
-        private void Awake(){
+        private async void Awake(){
             DOTween.Init();
+            await Factory.CreateControllersOfCards(_model, _settings);
 
             _model.OnChangeList += OnChangeList;
         }
 
         private async void OnChangeList(){
             Debug.Log($"{this} - List Changed");
-            _packOfCards = _view.transform.GetComponentsInChildren<CardView>().ToList();
-            if (_packOfCards.Count == 0){
+            var list = _view.transform.GetComponentsInChildren<CardView>().ToList();
+            if (list.Count == 0){
                 foreach (var card in _model.CardsList){
                     var cardView = Instantiate(_settings.CardTemplate, _view.transform, false);
-                    cardView.Init(
-                        card.FaceImage,
-                        card.Title,
-                        card.HealthPoints,
-                        card.AttackValue);
-                    _packOfCards.Add(cardView);
+                    var cardViewController = new CardViewController(_settings, card, cardView);
+                    _packOfCards.Add(cardViewController);
                 }
             }
 
@@ -42,7 +40,6 @@ namespace Code.GameBoard{
         }
 
         private async Task SetDefaultPositionOnCards(){
-            var rotationCoefficient = 2; //I know that it`s bad practice, but I couldn't turn the cards in the right direction
             //set normal positions
             var leftBoarder = _view._leftBoarder.position;
             var rightBoarder = _view._rightBoarder.position;
@@ -50,18 +47,16 @@ namespace Code.GameBoard{
             var verticalMagnitude = (_view._anchorCenter.position - leftBoarder).magnitude;
             for (var i = 0; i < _packOfCards.Count; i++){
                 var card = _packOfCards[i];
-                card.transform.DOJump(new Vector3(
-                        leftBoarder.x - wight.x / _packOfCards.Count * i,
-                        verticalMagnitude + _view._anchorCenter.position.y,
-                        -i),
-                    1f, 1, _settings.AnimationSpeed);
+                card.MoveTo(new Vector3(
+                    leftBoarder.x - wight.x / _packOfCards.Count * i,
+                    verticalMagnitude + _view._anchorCenter.position.y,
+                    -i));
             }
 
             await Task.Delay((int) (_settings.AnimationSpeed * 1000));
             //rotate to anchor
             foreach (var card in _packOfCards){
-                card.transform.DORotate(new Vector3(0, 0,
-                    (-card.transform.position.x + _view._anchorCenter.position.x) * rotationCoefficient), _settings.AnimationSpeed);
+                card.RotateTo(_view._anchorCenter.position.x);
             }
         }
 
