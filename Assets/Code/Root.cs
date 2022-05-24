@@ -1,3 +1,4 @@
+using System;
 using Code.Core;
 using Code.Core.Net;
 using UnityEngine;
@@ -13,8 +14,6 @@ namespace Code{
         private async void Awake(){
             var loader = new Loader();
             await loader.LoadModel(_model, _settings);
-            
-            
         }
     }
 }

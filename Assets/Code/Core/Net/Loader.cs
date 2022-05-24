@@ -11,7 +11,6 @@ namespace Code.Core.Net{
 
             for (int i = 0; i < cardsCount; i++){
                 var s = await Extensions.GetRemoteTexture(settings.UrlAdressByImage);
-                // await Task.Run(() => Extensions.LoadTexture(settings.UrlAdressByImage));
 
                 var card = new Card(){
                     HealthPoints = Random.Range(3, 9),

@@ -15,4 +15,4 @@ MonoBehaviour:
   CardTemplate: {fileID: 6581202306216556369, guid: b9522e9b76775804fb6bb39d9c6ee9c6, type: 3}
   MinCountCards: 4
   MaxCountCards: 6
-  UrlAdressByImage: https://picsum.photos/200/300
+  UrlAdressByImage: https://picsum.photos/200/200
