@@ -29,7 +29,11 @@ namespace Code.GameBoard{
             if (_packOfCards.Count == 0){
                 foreach (var card in _model.CardsList){
                     var cardView = Instantiate(_settings.CardTemplate, _view.transform, false);
-                    cardView.Init(card.FaceImage);
+                    cardView.Init(
+                        card.FaceImage,
+                        card.Title,
+                        card.HealthPoints,
+                        card.AttackValue);
                     _packOfCards.Add(cardView);
                 }
             }

@@ -13,7 +13,7 @@ namespace Code{
 
         private async void Awake(){
             var loader = new Loader();
-            await loader.LoadModel(_model, _settings);
+            await Loader.LoadModel(_model, _settings);
         }
     }
 }
