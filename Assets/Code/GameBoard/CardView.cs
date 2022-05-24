@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace Code.GameBoard{
     public class CardView : MonoBehaviour{
+        #region Fields
+
         [SerializeField]
         public SpriteRenderer _faceImage;
         [SerializeField]
@@ -17,6 +19,11 @@ namespace Code.GameBoard{
         public TextMeshPro _changedTextInHp;
         [SerializeField]
         public TextMeshPro _attackValue;
+
+        #endregion
+
+
+        #region methods
 
         public void Init(Sprite faceImage, string title, in int attackValue){
             _faceImage.sprite = faceImage;
@@ -31,6 +38,19 @@ namespace Code.GameBoard{
         public void StartNotificationFromChangeHp(in int delta, float settingsAnimationSpeed){
             StartCoroutine(StartNotification(delta, settingsAnimationSpeed));
         }
+
+        public void DiedAnimation(float duration){
+            transform.DOScale(0, duration);
+        }
+
+        public void DestroyHimself(){
+            Destroy(this);
+        }
+
+        #endregion
+
+
+        #region Private methods
 
         private IEnumerator StartNotification(int delta, float duration){
             var notification = Instantiate(_changedTextInHp);
@@ -53,12 +73,6 @@ namespace Code.GameBoard{
             return Color.white;
         }
 
-        public void DestroyHimself(){
-            Destroy(this);
-        }
-
-        public void DiedAnimation(float duration){
-            transform.DOScale(0, duration);
-        }
+        #endregion
     }
 }

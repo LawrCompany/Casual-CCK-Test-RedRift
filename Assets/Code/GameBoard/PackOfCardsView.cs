@@ -9,7 +9,5 @@ namespace Code.GameBoard{
         internal Transform _rightBoarder;
         [SerializeField]
         internal Transform _anchorCenter;
-        
-        
     }
 }

@@ -7,31 +7,58 @@ using UnityEngine;
 
 
 namespace Code.GameBoard{
-    internal class CardViewController{
+    public class CardViewController{
+        #region Fields
+
         private readonly ResourceSettings _settings;
         private readonly CardController _cardController;
         private readonly CardView _view;
         private readonly ICardModel _model;
-        
-        protected CompositeDisposable _subscriptions = new CompositeDisposable();
+
+        #endregion
+
+
+        #region PrivateData
 
         private int _oldHpValue = 0;
 
-        public CardViewController(ResourceSettings settings, CardController cardController, CardView view){
+        #endregion
+
+
+        #region Properties
+
+        protected CompositeDisposable _subscriptions = new CompositeDisposable();
+
+        #endregion
+
+
+        #region ClassLifeCycles
+
+        public CardViewController(ResourceSettings settings, CardController cardController, Transform placeForView){
             _settings = settings;
             _cardController = cardController;
-            _view = view;
+
+            _view = Object.Instantiate(_settings.CardTemplate, placeForView, false);
+            ;
 
             _model = _cardController.GetModel();
             _model.HealthPoints.Subscribe(ChangeHp).AddTo(_subscriptions);
             _cardController.OnDeath += OnDied;
-            _view.Init(_model.FaceImage,_model.Title,_model.AttackValue);
+            _view.Init(_model.FaceImage, _model.Title, _model.AttackValue);
         }
 
-        private async void OnDied(CardController obj){
-            _view.DiedAnimation(_settings.AnimationSpeed);
-            await Task.Delay((int)(1000*_settings.AnimationSpeed));
-            _view.DestroyHimself();
+        ~CardViewController(){
+            _cardController.OnDeath -= OnDied;
+            _subscriptions?.Dispose();
+        }
+
+        #endregion
+
+
+        #region Methods
+
+        public bool IsReferenceEquals(CardController item){
+            return ReferenceEquals(item, _cardController);
         }
 
         public void MoveTo(in Vector3 endPosition){
@@ -46,24 +73,28 @@ namespace Code.GameBoard{
                 _settings.AnimationSpeed);
         }
 
+        #endregion
+
+
+        #region Private methods
+
         private void ChangeHp(int value){
             _view.ChangeHp(value);
 
             if (_oldHpValue != 0){
                 var delta = _oldHpValue - value;
-                // Debug.Log($"old value:{_oldHpValue}|delta:{delta}");
                 _view.StartNotificationFromChangeHp(delta, _settings.AnimationSpeed);
             }
 
             _oldHpValue = value;
         }
 
-        ~CardViewController(){
-            _subscriptions?.Dispose();
+        private async void OnDied(CardController obj){
+            _view.DiedAnimation(_settings.AnimationSpeed);
+            await Task.Delay((int) (1000 * _settings.AnimationSpeed));
+            _view.DestroyHimself();
         }
 
-        public bool IsReferenceEquals(CardController item){
-            return object.ReferenceEquals(item, _cardController);
-        }
+        #endregion
     }
 }

@@ -10,6 +10,8 @@ using UnityEngine;
 
 namespace Code.GameBoard{
     public class PackOfCardsController : MonoBehaviour{
+        #region fields
+
         [SerializeField]
         private ResourceSettings _settings;
         [SerializeField]
@@ -17,9 +19,19 @@ namespace Code.GameBoard{
         [SerializeField]
         private PackOfCardsView _view;
 
+        #endregion
+
+
+        #region Properties
+
         protected CompositeDisposable _subscriptions = new CompositeDisposable();
 
         private List<CardViewController> _packOfCards = new List<CardViewController>();
+
+        #endregion
+
+
+        #region Unity Methods
 
         private async void Awake(){
             DOTween.Init();
@@ -27,14 +39,28 @@ namespace Code.GameBoard{
             await Factory.CreateControllersOfCards(_model, _settings);
         }
 
+        #endregion
+
+
+        #region ClassLifeCycles
+
+        ~PackOfCardsController(){
+            _model.OnChangeList -= OnChangeList;
+            _subscriptions?.Dispose();
+        }
+
+        #endregion
+
+
+        #region Private methods
+
         private async void OnChangeList(){
             Debug.Log($"{this} - List Changed");
             var list = _view.transform.GetComponentsInChildren<CardView>().ToList();
             if (list.Count == 0){
                 foreach (var card in _model.CardsList){
                     card.OnDeath += OneCardDied;
-                    var cardView = Instantiate(_settings.CardTemplate, _view.transform, false);
-                    var cardViewController = new CardViewController(_settings, card, cardView);
+                    var cardViewController = new CardViewController(_settings, card, _view.transform);
                     _packOfCards.Add(cardViewController);
                 }
             }
@@ -77,9 +103,6 @@ namespace Code.GameBoard{
             }
         }
 
-        ~PackOfCardsController(){
-            _model.OnChangeList -= OnChangeList;
-            _subscriptions?.Dispose();
-        }
+        #endregion
     }
 }

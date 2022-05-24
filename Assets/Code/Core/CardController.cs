@@ -5,13 +5,24 @@ using UniRx;
 
 namespace Code.Core{
     public class CardController: IGetDamaged{
+        #region Fields
+
         private readonly CardModel _model;
-        
         public event Action<CardController> OnDeath;
+
+        #endregion
+
+
+        #region ClassLifeCycles
 
         public CardController(CardModel model){
             _model = model;
         }
+
+        #endregion
+
+
+        #region Methods
 
         public ICardModel GetModel(){
             return _model;
@@ -23,5 +34,7 @@ namespace Code.Core{
                 OnDeath?.Invoke(this);
             }
         }
+
+        #endregion
     }
 }
