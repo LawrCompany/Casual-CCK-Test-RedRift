@@ -13,6 +13,8 @@ namespace Code.Ui{
         private ResourceSettings _settings;
         [SerializeField]
         private MainUiView _view;
+        [SerializeField]
+        private Transform _gameOverView;
 
         #endregion
 
@@ -41,12 +43,25 @@ namespace Code.Ui{
 
         private void Awake(){
             _view.Init(AttackOnTheCard);
+            _model.OnChangeList += OnChangeList;
+            _gameOverView.gameObject.SetActive(false);
         }
 
         #endregion
 
 
+        ~UiController(){
+            _model.OnChangeList -= OnChangeList;
+        }
+
+
         #region Private Methods
+
+        private void OnChangeList(){
+            if (_model.CardsList.Count == 0){
+                FinishTheGame();
+            }
+        }
 
         private void AttackOnTheCard(){
             Selected.GetDamage(Random.Range(_settings.MinAttackPower,_settings.MaxAttackPower));
@@ -58,6 +73,10 @@ namespace Code.Ui{
             if (_selectedIndex > _model.CardsList.Count - 1){
                 _selectedIndex = 0;
             }
+        }
+
+        private void FinishTheGame(){
+            _gameOverView.gameObject.SetActive(true);
         }
 
         #endregion

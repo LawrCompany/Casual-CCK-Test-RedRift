@@ -83,8 +83,7 @@ namespace Code.GameBoard{
 
         private void OnRemoveFromPack(CardController removeController){
             foreach (var viewController in _packOfCards){
-                if (viewController.IsReferenceEquals(removeController))
-                {
+                if (viewController.IsReferenceEquals(removeController)){
                     _cashViewController = viewController;
                     _packOfCards.Remove(viewController);
                     _model.OnChangeList?.Invoke();
@@ -96,6 +95,7 @@ namespace Code.GameBoard{
         private async void OneCardDied(IGetDamaged item){
             item.OnDeath -= OneCardDied;
             _model.CardsList.Remove(item as CardController);
+            _model.OnChangeList?.Invoke();
 
             foreach (var controller in _packOfCards){
                 if (controller.IsReferenceEquals(item as CardController)){
@@ -115,7 +115,7 @@ namespace Code.GameBoard{
             var verticalMagnitude = (_view._anchorCenter.position - leftBoarder).magnitude;
             for (var i = 0; i < _packOfCards.Count; i++){
                 var card = _packOfCards[i];
-                card.MoveTo(parent:_view.transform,new Vector3(
+                card.MoveTo(parent: _view.transform, new Vector3(
                     leftBoarder.x - wight.x / _packOfCards.Count * i,
                     verticalMagnitude + _view._anchorCenter.position.y,
                     -i));
