@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-namespace Code.GameBoard{
+namespace Code.GameBoard.Views{
     public class PackOfCardsView : MonoBehaviour{
         [SerializeField]
         internal Transform _leftBoarder;

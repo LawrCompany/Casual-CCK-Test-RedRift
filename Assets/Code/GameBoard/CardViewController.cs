@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Code.Core;
-using Code.Core.Net;
+using Code.Core.Models;
+using Code.Data;
 using Code.GameBoard.DragAndDrop;
+using Code.GameBoard.Views;
 using DG.Tweening;
 using UniRx;
 using UnityEngine;

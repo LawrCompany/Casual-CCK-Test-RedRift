@@ -1,8 +1,9 @@
 ﻿using Code.GameBoard;
+using Code.GameBoard.Views;
 using UnityEngine;
 
 
-namespace Code.Core{
+namespace Code.Data{
     [CreateAssetMenu(fileName = nameof(ResourceSettings), menuName = "Settings/" + nameof(ResourceSettings))]
     public class ResourceSettings : ScriptableObject{
         public CardView CardTemplate;

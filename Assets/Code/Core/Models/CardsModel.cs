@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Code.Core{
+namespace Code.Core.Models{
     [CreateAssetMenu(fileName = nameof(CardsModel), menuName = "Models/" + nameof(CardsModel))]
     public class CardsModel: ScriptableObject{
         public List<CardController> CardsList{ get; set; }

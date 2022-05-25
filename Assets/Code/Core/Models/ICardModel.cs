@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace Code.Core.Net{
+namespace Code.Core.Models{
     public interface ICardModel{
         ReactiveProperty<int> HealthPoints{ get; set; }
         string Title{ get; set; }

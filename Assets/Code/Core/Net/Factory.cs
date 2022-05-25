@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Code.Core.Models;
+using Code.Data;
 using UniRx;
 using UnityEngine;
 

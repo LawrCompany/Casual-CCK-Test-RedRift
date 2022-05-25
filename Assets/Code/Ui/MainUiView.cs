@@ -1,5 +1,6 @@
 ﻿using System;
 using Code.GameBoard;
+using Code.GameBoard.Views;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;

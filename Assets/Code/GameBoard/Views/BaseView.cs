@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace Code.GameBoard{
+namespace Code.GameBoard.Views{
     public class BaseView: MonoBehaviour{
         #region Properties
 

@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-namespace Code.GameBoard{
+namespace Code.GameBoard.Views{
     public class CardView : MonoBehaviour, IDraggable{
         #region Fields
 
