@@ -22,15 +22,10 @@ namespace Code.GameBoard{
 
         private int _oldHpValue = 0;
 
-        #endregion
-
-
-        #region Properties
-
-        protected CompositeDisposable _subscriptions = new CompositeDisposable();
+        private CompositeDisposable _subscriptions = new CompositeDisposable();
 
         #endregion
-
+        
 
         #region ClassLifeCycles
 
@@ -39,7 +34,6 @@ namespace Code.GameBoard{
             _cardController = cardController;
 
             _view = Object.Instantiate(_settings.CardTemplate, placeForView, false);
-            ;
 
             _model = _cardController.GetModel();
             _model.HealthPoints.Subscribe(ChangeHp).AddTo(_subscriptions);
@@ -79,11 +73,13 @@ namespace Code.GameBoard{
         #region Private methods
 
         private void ChangeHp(int value){
-            _view.ChangeHp(value);
-
-            if (_oldHpValue != 0){
+            if (_oldHpValue == 0){
+                _view.InitHp(value);
+            } else{
                 var delta = _oldHpValue - value;
-                _view.StartNotificationFromChangeHp(delta, _settings.AnimationSpeed);
+                Debug.Log(delta);
+                _view.AnimationChangeHp(delta, _settings.AnimationSpeed);
+                _view.AnimationOfNotificationOfChangeHp(delta, _settings.AnimationSpeed);
             }
 
             _oldHpValue = value;

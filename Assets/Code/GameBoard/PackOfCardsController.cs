@@ -22,10 +22,9 @@ namespace Code.GameBoard{
         #endregion
 
 
-        #region Properties
+        #region PrivateData
 
-        protected CompositeDisposable _subscriptions = new CompositeDisposable();
-
+        private CompositeDisposable _subscriptions = new CompositeDisposable();
         private List<CardViewController> _packOfCards = new List<CardViewController>();
 
         #endregion

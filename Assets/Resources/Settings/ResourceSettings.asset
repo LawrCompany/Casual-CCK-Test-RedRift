@@ -16,3 +16,4 @@ MonoBehaviour:
   MinCountCards: 4
   MaxCountCards: 6
   UrlAdressByImage: https://picsum.photos/200/200
+  AnimationSpeed: 0.5

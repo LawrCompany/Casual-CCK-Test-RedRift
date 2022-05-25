@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -31,12 +31,34 @@ namespace Code.GameBoard{
             _attackValue.text = attackValue.ToString();
         }
 
-        public void ChangeHp(in int value){
+        public void InitHp(in int value){
             _hp.text = value.ToString();
         }
 
-        public void StartNotificationFromChangeHp(in int delta, float settingsAnimationSpeed){
-            StartCoroutine(StartNotification(delta, settingsAnimationSpeed));
+        public void AnimationChangeHp(in int delta, float animationSpeed){
+            StartCoroutine(StartCounter(delta, animationSpeed));
+        }
+
+        public void AnimationOfNotificationOfChangeHp(in int delta, float animationSpeed){
+            StartCoroutine(StartNotification(delta, animationSpeed));
+        }
+
+        private IEnumerator StartCounter(int delta, float duration){
+            if (delta == 0) yield return null;
+            if(delta > 0)
+                for (int i = 0; i < delta; i++){
+                    var value = int.Parse(_hp.text);
+                    value--;
+                    _hp.text = value.ToString();
+                    yield return new WaitForSeconds(duration / delta);
+                }
+            if (delta < 0)
+                for (int i = 0; i > delta; i--){
+                    var value = int.Parse(_hp.text);
+                    value++;
+                    _hp.text = value.ToString();
+                    yield return new WaitForSeconds(duration / Math.Abs(delta));
+                }
         }
 
         public void DiedAnimation(float duration){
@@ -53,12 +75,12 @@ namespace Code.GameBoard{
         #region Private methods
 
         private IEnumerator StartNotification(int delta, float duration){
-            var notification = Instantiate(_changedTextInHp);
-            notification.transform.position = _hp.transform.position;
+            var notification = Instantiate(_changedTextInHp, transform, _faceImage);
 
-            notification.text = delta > 0 ? $"-{delta}" : $"{delta}";
+            notification.text = delta > 0 ? $"-{delta}" : $"+{Math.Abs(delta)}";
             notification.color = GetColorByValue(delta);
 
+            delta = Math.Abs(delta);
             notification.transform.DOMove(_changedTextInHp.transform.position + Vector3.up, duration);
             notification.DOFade(0, duration);
             yield return new WaitForSeconds(delta);

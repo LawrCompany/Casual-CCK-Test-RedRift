@@ -14,13 +14,6 @@ namespace Code.Ui{
         [SerializeField]
         private MainUiView _view;
 
-        [Space]
-        [Header("Simple configuration")]
-        [SerializeField]
-        private int _minAttackPower = -2;
-        [SerializeField]
-        private int _maxAttackPower = 9;
-
         #endregion
 
 
@@ -56,7 +49,7 @@ namespace Code.Ui{
         #region Private Methods
 
         private void AttackOnTheCard(){
-            Selected.GetDamage(Random.Range(_minAttackPower, _maxAttackPower));
+            Selected.GetDamage(Random.Range(_settings.MinAttackPower,_settings.MaxAttackPower));
             Next();
         }
 
