@@ -26,6 +26,7 @@ namespace Code.GameBoard{
 
         private CompositeDisposable _subscriptions = new CompositeDisposable();
         private List<CardViewController> _packOfCards = new List<CardViewController>();
+        private CardViewController _cashViewController;
 
         #endregion
 
@@ -44,6 +45,11 @@ namespace Code.GameBoard{
         #region ClassLifeCycles
 
         ~PackOfCardsController(){
+            foreach (var cardController in _model.CardsList){
+                cardController.OnAddedToPack -= OnAddedToPack;
+                cardController.OnRemoveFromPack -= OnRemoveFromPack;
+            }
+
             _model.OnChangeList -= OnChangeList;
             _subscriptions?.Dispose();
         }
@@ -58,6 +64,8 @@ namespace Code.GameBoard{
             var list = _view.transform.GetComponentsInChildren<CardView>().ToList();
             if (list.Count == 0){
                 foreach (var card in _model.CardsList){
+                    card.OnRemoveFromPack += OnRemoveFromPack;
+                    card.OnAddedToPack += OnAddedToPack;
                     card.OnDeath += OneCardDied;
                     var cardViewController = new CardViewController(_settings, card, _view.transform);
                     _packOfCards.Add(cardViewController);
@@ -65,6 +73,25 @@ namespace Code.GameBoard{
             }
 
             await SetDefaultPositionOnCards();
+        }
+
+        private void OnAddedToPack(CardController addedController){
+            if (_cashViewController != null){
+                _packOfCards.Add(_cashViewController);
+                _model.OnChangeList?.Invoke();
+            }
+        }
+
+        private void OnRemoveFromPack(CardController removeController){
+            foreach (var viewController in _packOfCards){
+                if (viewController.IsReferenceEquals(removeController))
+                {
+                    _cashViewController = viewController;
+                    _packOfCards.Remove(viewController);
+                    _model.OnChangeList?.Invoke();
+                    return;
+                }
+            }
         }
 
         private async void OneCardDied(IGetDamaged item){
@@ -89,7 +116,7 @@ namespace Code.GameBoard{
             var verticalMagnitude = (_view._anchorCenter.position - leftBoarder).magnitude;
             for (var i = 0; i < _packOfCards.Count; i++){
                 var card = _packOfCards[i];
-                card.MoveTo(new Vector3(
+                card.MoveTo(parent:_view.transform,new Vector3(
                     leftBoarder.x - wight.x / _packOfCards.Count * i,
                     verticalMagnitude + _view._anchorCenter.position.y,
                     -i));

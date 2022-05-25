@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Code.Core;
 using Code.Core.Net;
+using Code.GameBoard.DragAndDrop;
 using DG.Tweening;
 using UniRx;
 using UnityEngine;
@@ -25,7 +26,7 @@ namespace Code.GameBoard{
         private CompositeDisposable _subscriptions = new CompositeDisposable();
 
         #endregion
-        
+
 
         #region ClassLifeCycles
 
@@ -38,12 +39,37 @@ namespace Code.GameBoard{
             _model = _cardController.GetModel();
             _model.HealthPoints.Subscribe(ChangeHp).AddTo(_subscriptions);
             _cardController.OnDeath += OnDied;
-            _view.Init(_model.FaceImage, _model.Title, _model.AttackValue);
+            _view.InitInfo(_model.FaceImage, _model.Title, _model.AttackValue);
+
+            _view.InitDrag(OnBeginDrag, OnDrag, OnEndDrag);
         }
 
         ~CardViewController(){
             _cardController.OnDeath -= OnDied;
             _subscriptions?.Dispose();
+        }
+
+        #endregion
+
+
+        #region DragNDrop
+
+        private void OnBeginDrag(){
+            _view.transform.SetParent(null);
+            _cardController.OnRemoveFromPack?.Invoke(_cardController);
+            // _view ToDo create lighting
+        }
+
+        private void OnDrag(Vector2 position){
+            _view.transform.position = position;
+        }
+
+        private void OnEndDrag(ISlotHandler slot){
+            if (slot == null){
+                _cardController.OnAddedToPack?.Invoke(_cardController);
+            } else{
+                _view.transform.SetParent(slot.Transform);
+            }
         }
 
         #endregion
@@ -55,7 +81,8 @@ namespace Code.GameBoard{
             return ReferenceEquals(item, _cardController);
         }
 
-        public void MoveTo(in Vector3 endPosition){
+        public void MoveTo(Transform parent, in Vector3 endPosition){
+            _view.transform.SetParent(parent);
             _view.transform.DOJump(endPosition, jumpPower: 1, numJumps: 1, _settings.AnimationSpeed);
         }
 
@@ -77,7 +104,6 @@ namespace Code.GameBoard{
                 _view.InitHp(value);
             } else{
                 var delta = _oldHpValue - value;
-                Debug.Log(delta);
                 _view.AnimationChangeHp(delta, _settings.AnimationSpeed);
                 _view.AnimationOfNotificationOfChangeHp(delta, _settings.AnimationSpeed);
             }

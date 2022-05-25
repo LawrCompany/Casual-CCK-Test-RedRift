@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
+using Code.GameBoard.DragAndDrop;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 namespace Code.GameBoard{
-    public class CardView : MonoBehaviour{
+    public class CardView : MonoBehaviour, IDraggable{
         #region Fields
 
         [SerializeField]
@@ -23,9 +25,18 @@ namespace Code.GameBoard{
         #endregion
 
 
+        #region PrivateData
+
+        private UnityAction _onBeginDrag;
+        private UnityAction<Vector2> _onDrag;
+        private UnityAction<ISlotHandler> _onEndDrag;
+
+        #endregion
+
+
         #region methods
 
-        public void Init(Sprite faceImage, string title, in int attackValue){
+        public void InitInfo(Sprite faceImage, string title, in int attackValue){
             _faceImage.sprite = faceImage;
             _title.text = title;
             _attackValue.text = attackValue.ToString();
@@ -45,13 +56,14 @@ namespace Code.GameBoard{
 
         private IEnumerator StartCounter(int delta, float duration){
             if (delta == 0) yield return null;
-            if(delta > 0)
+            if (delta > 0)
                 for (int i = 0; i < delta; i++){
                     var value = int.Parse(_hp.text);
                     value--;
                     _hp.text = value.ToString();
                     yield return new WaitForSeconds(duration / delta);
                 }
+
             if (delta < 0)
                 for (int i = 0; i > delta; i--){
                     var value = int.Parse(_hp.text);
@@ -67,6 +79,29 @@ namespace Code.GameBoard{
 
         public void DestroyHimself(){
             Destroy(this);
+        }
+
+        #endregion
+
+
+        #region IDraggable
+
+        public void InitDrag(UnityAction onBeginDrag, UnityAction<Vector2> onDrag, UnityAction<ISlotHandler> onEndDrag){
+            _onBeginDrag = onBeginDrag;
+            _onDrag = onDrag;
+            _onEndDrag = onEndDrag;
+        }
+
+        public void OnBeginDrag(){
+            _onBeginDrag?.Invoke();
+        }
+
+        public void OnDrag(Vector2 position){
+            _onDrag?.Invoke(position);
+        }
+
+        public void OnEndDrag(ISlotHandler slot){
+            _onEndDrag?.Invoke(slot);
         }
 
         #endregion

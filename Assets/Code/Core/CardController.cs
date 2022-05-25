@@ -1,6 +1,5 @@
 ﻿using System;
 using Code.Core.Net;
-using UniRx;
 
 
 namespace Code.Core{
@@ -8,6 +7,9 @@ namespace Code.Core{
         #region Fields
 
         private readonly CardModel _model;
+        
+        public Action<CardController> OnRemoveFromPack;
+        public Action<CardController> OnAddedToPack;
         public event Action<CardController> OnDeath;
 
         #endregion

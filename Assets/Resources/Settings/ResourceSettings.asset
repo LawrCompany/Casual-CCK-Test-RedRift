@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: ResourceSettings
   m_EditorClassIdentifier: Assembly-CSharp::ResourceSettings
   CardTemplate: {fileID: 6581202306216556369, guid: b9522e9b76775804fb6bb39d9c6ee9c6, type: 3}
-  MinCountCards: 4
-  MaxCountCards: 6
+  MinCountCards: 6
+  MaxCountCards: 9
   UrlAdressByImage: https://picsum.photos/200/200
-  AnimationSpeed: 0.5
+  AnimationSpeed: 1
+  MinAttackPower: -2
+  MaxAttackPower: 9
