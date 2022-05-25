@@ -60,7 +60,6 @@ namespace Code.GameBoard{
         #region Private methods
 
         private async void OnChangeList(){
-            Debug.Log($"{this} - List Changed");
             var list = _view.transform.GetComponentsInChildren<CardView>().ToList();
             if (list.Count == 0){
                 foreach (var card in _model.CardsList){

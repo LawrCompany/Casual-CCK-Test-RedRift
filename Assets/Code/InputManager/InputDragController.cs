@@ -14,6 +14,7 @@ namespace Code.InputManager{
 
 
         private void Update(){
+            //ToDo take out mouse and top events in the InputController
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             if (Input.GetMouseButtonDown(0) || Input.touchCount == 1){
@@ -21,7 +22,6 @@ namespace Code.InputManager{
                     var target = Physics2D.OverlapPoint(mousePos);
                     if (!target) return;
                     if (target.TryGetComponent(out IDraggable draggable)){
-                        Debug.Log($"{draggable}");
                         if (_draggable != draggable)
                             draggable.OnBeginDrag();
                         _draggable = draggable;
