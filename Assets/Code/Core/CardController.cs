@@ -8,13 +8,18 @@ namespace Code.Core{
         #region Fields
 
         private readonly CardModel _model;
-        
-        public Action<CardController> OnRemoveFromPack;
-        public Action<CardController> OnAddedToPack;
         public event Action<CardController> OnDeath;
 
         #endregion
 
+
+        #region Properties
+        
+        public Action<CardController> OnRemoveFromPack{ get; set; }
+        public Action<CardController> OnAddedToPack{ get; set; }
+        public Action<CardController> OnReturnToLastPosition{ get; set; }
+
+        #endregion
 
         #region ClassLifeCycles
 

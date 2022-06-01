@@ -57,8 +57,6 @@ namespace Code.GameBoard{
         #region DragNDrop
 
         private void OnBeginDrag(){
-            _view.transform.SetParent(null);
-            _cardController.OnRemoveFromPack?.Invoke(_cardController);
             // _view ToDo create lighting
         }
 
@@ -68,8 +66,15 @@ namespace Code.GameBoard{
 
         private void OnEndDrag(ISlotHandler slot){
             if (slot == null){
-                _cardController.OnAddedToPack?.Invoke(_cardController);
+                if (_view.transform.parent.gameObject.TryGetComponent(out ISlotHandler _)){
+                    _view.transform.SetParent(null);
+                    _cardController.OnRemoveFromPack?.Invoke(_cardController);
+                    _cardController.OnAddedToPack?.Invoke(_cardController);
+                }
+
+                _cardController.OnReturnToLastPosition?.Invoke(_cardController);
             } else{
+                _cardController.OnRemoveFromPack?.Invoke(_cardController);
                 _view.transform.SetParent(slot.Transform);
             }
         }
@@ -88,11 +93,11 @@ namespace Code.GameBoard{
             _view.transform.DOJump(endPosition, jumpPower: 1, numJumps: 1, _settings.AnimationSpeed);
         }
 
-        public void RotateTo(in float positionAnchor){
+        public void RotateTo(in Vector3 positionAnchor){
             var rotationCoefficient =
-                20; //I know that it`s bad practice, but I couldn't turn the cards in the right direction
+                5; //I know that it`s bad practice, but I couldn't turn the cards in the right direction
             _view.transform.DORotate(new Vector3(0, 0,
-                    (-_view.transform.position.x + positionAnchor) * rotationCoefficient),
+                    (-_view.transform.position.x + positionAnchor.x) * rotationCoefficient),
                 _settings.AnimationSpeed);
         }
 

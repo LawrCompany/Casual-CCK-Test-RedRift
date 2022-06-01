@@ -68,12 +68,17 @@ namespace Code.GameBoard{
                 foreach (var card in _model.CardsList){
                     card.OnRemoveFromPack += OnRemoveFromPack;
                     card.OnAddedToPack += OnAddedToPack;
+                    card.OnReturnToLastPosition += OnReturnToLastPosition;
                     card.OnDeath += OneCardDied;
                     var cardViewController = new CardViewController(_settings, card, _view.transform);
                     _packOfCards.Add(cardViewController);
                 }
             }
 
+            await SetDefaultPositionOnCards();
+        }
+
+        private async void OnReturnToLastPosition(CardController controller){
             await SetDefaultPositionOnCards();
         }
 
@@ -134,7 +139,7 @@ namespace Code.GameBoard{
             await Task.Delay((int) (_settings.AnimationSpeed * 1000));
             //rotate to anchor
             foreach (var card in _packOfCards){
-                card.RotateTo(_view._anchorCenter.position.x);
+                card.RotateTo(_view._anchorCenter.position);
             }
         }
 
