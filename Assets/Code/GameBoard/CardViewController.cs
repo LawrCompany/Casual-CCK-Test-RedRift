@@ -90,7 +90,7 @@ namespace Code.GameBoard{
 
         public void RotateTo(in float positionAnchor){
             var rotationCoefficient =
-                2; //I know that it`s bad practice, but I couldn't turn the cards in the right direction
+                20; //I know that it`s bad practice, but I couldn't turn the cards in the right direction
             _view.transform.DORotate(new Vector3(0, 0,
                     (-_view.transform.position.x + positionAnchor) * rotationCoefficient),
                 _settings.AnimationSpeed);

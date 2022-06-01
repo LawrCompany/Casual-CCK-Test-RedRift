@@ -114,13 +114,20 @@ namespace Code.GameBoard{
             //set normal positions
             var leftBoarder = _view._leftBoarder.position;
             var rightBoarder = _view._rightBoarder.position;
-            var wight = leftBoarder - rightBoarder;
-            var verticalMagnitude = (_view._anchorCenter.position - leftBoarder).magnitude;
+
+            _view._anchorCenter.LookAt(leftBoarder);
+            var vectorFrom = _view._anchorCenter.forward;
+            _view._anchorCenter.LookAt(rightBoarder);
+            var vectorTo = _view._anchorCenter.forward;
+            
             for (var i = 0; i < _packOfCards.Count; i++){
                 var card = _packOfCards[i];
+                var angle = - Vector3.Angle(vectorFrom, vectorTo) / _packOfCards.Count * i;
+                angle = angle * Mathf.Deg2Rad - (210 * Mathf.Deg2Rad);
+
                 card.MoveTo(parent: _view.transform, new Vector3(
-                    leftBoarder.x - wight.x / _packOfCards.Count * i,
-                    verticalMagnitude + _view._anchorCenter.position.y,
+                    Mathf.Cos(angle) + _view._anchorCenter.position.x,
+                    Mathf.Sin(angle) + _view._leftBoarder.position.y,
                     -i));
             }
 
