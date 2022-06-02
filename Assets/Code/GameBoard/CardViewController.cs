@@ -94,10 +94,10 @@ namespace Code.GameBoard{
         }
 
         public void RotateTo(in Vector3 positionAnchor){
-            var rotationCoefficient =
-                5; //I know that it`s bad practice, but I couldn't turn the cards in the right direction
-            _view.transform.DORotate(new Vector3(0, 0,
-                    (-_view.transform.position.x + positionAnchor.x) * rotationCoefficient),
+            _view.transform.DORotate(new Vector3(
+                    0,
+                    0,//Angle of Rotate is calculating from self position and anchor position  
+                    (_view.transform.position.x + positionAnchor.x) * positionAnchor.y),
                 _settings.AnimationSpeed);
         }
 
