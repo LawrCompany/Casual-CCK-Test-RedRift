@@ -16,8 +16,7 @@ namespace Code.InputManager{
         private void Update(){
             //ToDo take out mouse and top events in the InputController
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            if (Input.GetMouseButtonDown(0) || Input.touchCount == 1){
+            if (Input.GetMouseButtonDown(0)){
                 if (_draggable == null){
                     var target = Physics2D.OverlapPoint(mousePos);
                     if (!target) return;
@@ -40,7 +39,7 @@ namespace Code.InputManager{
                 _draggable?.OnDrag(mousePos);
             }
 
-            if (Input.GetMouseButtonUp(0) || Input.touchCount <= 0){
+            if (Input.GetMouseButtonUp(0)){
                 _canMove = false;
                 _dragging = false;
                 if (_draggable != null){
@@ -52,14 +51,16 @@ namespace Code.InputManager{
                             _draggable = null;
                             return;
                         }
+
                         if (slot.TryGetComponent(out ISlotHandler board)){
-                            if(board.IsEmpty){
+                            if (board.IsEmpty){
                                 _draggable.OnEndDrag(board);
                                 _draggable = null;
                                 return;
                             }
                         }
                     }
+
                     _draggable?.OnEndDrag(null);
                     _draggable = null;
                 }
